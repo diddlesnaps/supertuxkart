@@ -1,0 +1,3 @@
+[submodule "libopenh264-helper"]
+	path = libopenh264-helper
+	url = https://github.com/diddledan/libopenh264-helper.git
