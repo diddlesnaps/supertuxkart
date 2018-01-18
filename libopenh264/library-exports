@@ -1,0 +1,35 @@
+H264DIR=$SNAP_USER_DATA/openh264
+
+# see: https://github.com/cisco/openh264/releases
+OPENH264ARMURL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-android19.so.bz2
+OPENH264X64URL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-linux64.4.so.bz2
+OPENH264X86URL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-linux32.4.so.bz2
+
+if [ $needs_update = true ]; then
+	rm -rf "$H264DIR"
+	mkdir -p "$H264DIR"
+
+	OPENH264URL=""
+	if [ "$SNAP_ARCH" = "armhf" ]; then
+		OPENH264URL="$OPENH264ARMURL"
+	elif [ "$SNAP_ARCH" = "amd64" ]; then
+		OPENH264URL="$OPENH264X64URL"
+	elif [ "$SNAP_ARCH" = "i386" -o "$SNAP_ARCH" = "i586" -o "$SNAP_ARCH" = "i686" ]; then
+		OPENH264URL="$OPENH264X86URL"
+	fi
+
+	if [ -n "$OPENH264URL" ]; then
+		curl -o "$H264DIR/libopenh264.so.bz2" "$OPENH264URL"
+		bunzip2 "$H264DIR/libopenh264.so.bz2"
+	fi
+fi
+
+if [ ! -e "$H264DIR/libopenh264.so.3" ]; then
+	ln -s libopenh264.so "$H264DIR/libopenh264.so.3"
+fi
+if [ ! -r "$H264DIR/libopenh264.so.4" ]; then
+	ln -s libopenh264.so "$H264DIR/libopenh264.so.4"
+fi
+
+export LD_LIBRARY_PATH="$H264DIR:$LD_LIBRARY_PATH"
+

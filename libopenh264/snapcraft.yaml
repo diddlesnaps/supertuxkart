@@ -1,0 +1,23 @@
+name: libopenh264
+version: 0.1
+summary: This is meant to be consumed by other projects
+description: |
+  This sets up the libopenh264 library for projects which require a properly licensed h264 codec
+confinement: strict
+
+parts:
+  library:
+    plugin: make
+    source: https://github.com/cisco/openh264/archive/v1.7.0.tar.gz
+    build-packages:
+      - nasm
+    stage-packages:
+      - bzip2
+      - curl
+    prime:
+      - '-bin/bz*'
+
+  helper:
+    source: .
+    plugin: make
+    after: [library]
