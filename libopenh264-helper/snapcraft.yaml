@@ -1,0 +1,52 @@
+name: libopenh264-helper
+version: 1
+summary: libopenh264 helper for snapcraft
+description: |
+  Helper for libopenh264 launcher. It brings the necessary code
+  and exports for binding and using libopenh264 in a relocatable
+  fasion.
+  .
+  Usage:
+    1. add "after: [libopenh264]" to your launcher
+    2. prepend your command with "libopenh264-launch", like:
+      "command: libopenh264-launch foo" or in combination with
+      a desktop-helper, like:
+      "command: desktop-launch libopenh264-launch foo" if foo is
+      in the $PATH. You can as well specify:
+      "command: libopenh264-launch $SNAP/foo"
+    3. add needed plugs to your application:
+      - for a graphical application:
+          plugs: [X11 (or unity7 for appmenu integration)]. Think
+        about adding opengl for hardware acceleration.
+      - if your application needs access to sound:
+          plugs: [pulseaudio]
+      - access to user's home directory:
+          plugs: [home]
+      - access to Mir:
+          plugs:
+            mir:
+            mir-libs:
+              default-provider: mir-libs
+              interface: content
+              target: mir-libs
+
+confinement: strict
+
+parts:
+  libopenh264-helper:
+    source: .
+    source-subdir: libopenh264
+    plugin: make
+    after: [libopenh264-library]
+
+  libopenh264-library:
+    plugin: make
+    source: https://github.com/cisco/openh264/archive/v1.7.0.tar.gz
+    build-packages:
+      - nasm
+    stage-packages:
+      - bzip2
+      - curl
+    prime:
+      - '-bin/bz*'
+
