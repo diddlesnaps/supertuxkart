@@ -1,6 +1,6 @@
 name: supertuxkart
-version: '0.9.2'
-icon: data/supertuxkart.png
+version: '0.9.3'
+icon: supertuxkart.png
 summary: SuperTuxKart is a free kart racing game
 description: |
   SuperTuxKart is a free kart racing game. It focuses on fun and not on
@@ -86,9 +86,8 @@ parts:
   libopenglrecorder:
     after: [libopenh264-library]
     plugin: cmake
-    #source: https://github.com/Benau/libopenglrecorder.git
-    source: https://github.com/diddledan/libopenglrecorder.git
-    source-branch: patch-1
+    source: https://github.com/Benau/libopenglrecorder.git
+    source-depth: 1
     configflags:
       - -DCMAKE_INSTALL_PREFIX=/usr
     build-packages:
@@ -107,7 +106,7 @@ parts:
   supertuxkart-code:
     after: [libopenh264-library, libopenglrecorder, desktop-glib-only]
     plugin: cmake
-    source: https://10gbps-io.dl.sourceforge.net/project/supertuxkart/SuperTuxKart/0.9.3-rc1/supertuxkart-0.9.3-rc1-src.tar.xz
+    source: https://10gbps-io.dl.sourceforge.net/project/supertuxkart/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
     configflags:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DENABLE_WAYLAND_DEVICE=ON
