@@ -20,11 +20,13 @@ confinement: strict
 apps:
   supertuxkart:
     command: desktop-launch libopenh264-launch $SNAP/usr/bin/supertuxkart
+    desktop: usr/share/applications/supertuxkart.desktop
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
     plugs:
       - desktop
       - joystick
+      - network
       - opengl
       - pulseaudio
       - wayland
@@ -61,6 +63,8 @@ parts:
   libopenh264-library:
     after: [libopenh264-helper]
     plugin: make
+    make-parameters:
+      - PREFIX=/usr
     source: https://github.com/cisco/openh264/archive/v1.7.0.tar.gz
     build-packages:
       - g++
@@ -69,8 +73,8 @@ parts:
       - nasm
     stage-packages: [libpulse0]
     install: |
-      find $SNAPCRAFT_PART_INSTALL/usr/local/lib/pkgconfig -name "*openh264*.pc" -exec \
-        sed -i "s|/usr/local/include|$SNAPCRAFT_STAGE/usr/local/include|g;s|/usr/local/lib|$SNAPCRAFT_STAGE/usr/local/lib|g" '{}' \;
+      find $SNAPCRAFT_PART_INSTALL/usr/lib/pkgconfig -name "*openh264*.pc" -exec \
+        sed -i "s|/usr/include|$SNAPCRAFT_STAGE/usr/include|g;s|/usr/lib|$SNAPCRAFT_STAGE/usr/lib|g" '{}' \;
     prime:
       - lib/libjson-c*
       - lib/libwrap*
@@ -104,9 +108,14 @@ parts:
       - libvpx3
 
   supertuxkart-code:
-    after: [libopenh264-library, libopenglrecorder, desktop-glib-only]
+    after:
+      - desktop-glib-only
+      - libopenglrecorder
+      - libopenh264-library
     plugin: cmake
     source: https://10gbps-io.dl.sourceforge.net/project/supertuxkart/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
+    prepare: |
+      sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' ../src/data/supertuxkart.desktop
     configflags:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DENABLE_WAYLAND_DEVICE=ON
@@ -146,3 +155,15 @@ parts:
       - libwayland-egl1-mesa
       - libxkbcommon0
       - zlib1g
+    prime:
+      - lib
+      - usr/bin/supertuxkart
+      - usr/lib
+      - -usr/lib/gcc
+      - -usr/lib/sasl2
+      - usr/share/appdata
+      - usr/share/applications
+      - usr/share/icons
+      - usr/share/pixmaps
+      - usr/share/supertuxkart
+      - usr/share/X11

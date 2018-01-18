@@ -1,9 +1,9 @@
 H264DIR=$SNAP_USER_DATA/openh264
 
 # see: https://github.com/cisco/openh264/releases
-OPENH264ARMURL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-android19.so.bz2
-OPENH264X64URL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-linux64.4.so.bz2
-OPENH264X86URL=https://c7ab4fbd1155b1257820-fefb1450afc680271ea365edabf976ea.ssl.cf1.rackcdn.com/libopenh264-1.7.0-linux32.4.so.bz2
+OPENH264ARMURL=http://ciscobinary.openh264.org/libopenh264-1.7.0-android19.so.bz2
+OPENH264X64URL=http://ciscobinary.openh264.org/libopenh264-1.7.0-linux64.4.so.bz2
+OPENH264X86URL=http://ciscobinary.openh264.org/libopenh264-1.7.0-linux32.4.so.bz2
 
 if [ $needs_update = true ]; then
 	rm -rf "$H264DIR"
