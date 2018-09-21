@@ -146,6 +146,7 @@ parts:
     stage-packages:
     - libbluetooth3
     - libcurl3
+    - libdb5.3
     - libfreetype6
     - libfribidi0
     - libgl1-mesa-glx
@@ -174,3 +175,4 @@ parts:
     - usr/share/pixmaps
     - usr/share/supertuxkart
     - usr/share/X11
+    build-attributes: [no-system-libraries]
