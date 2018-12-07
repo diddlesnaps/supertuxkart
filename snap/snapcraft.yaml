@@ -118,7 +118,7 @@ parts:
     - libopenglrecorder
     - libopenh264-library
     plugin: cmake
-    source: https://sourceforge.mirrorservice.org/s/su/supertuxkart/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
+    source: https://sourceforge.net/projects/supertuxkart/files/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
     override-build: |
       sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' ../src/data/supertuxkart.desktop
       snapcraftctl build
