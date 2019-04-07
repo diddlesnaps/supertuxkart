@@ -1,25 +1,15 @@
 name: supertuxkart
-version: '0.9.3'
+version: '0.10-rc1'
+adopt-info: supertuxkart
 icon: supertuxkart.png
-summary: SuperTuxKart is a free kart racing game
-description: >
-  SuperTuxKart is a free kart racing game. It focuses on fun and not on
-  realistic kart physics. Instructions can be found on the in-game help page.
-
-  The SuperTuxKart homepage can be found at https://supertuxkart.net/.
-
-  To run SuperTuxKart, make sure that your computer includes a graphics card
-  capable of 3D rendering - NVIDIA GeForce 8 series and newer (GeForce 8100 or
-  newer), AMD/ATI Radeon HD 4000 series and newer, Intel HD Graphics 3000 and
-  newer. You'll need at least 512 MB of free VRAM (video memory), and a CPU
-  that's running at 1 GHz or faster.
 
 grade: stable
 confinement: strict
+base: core18
 
 apps:
   supertuxkart:
-    command: desktop-launch alsa-launch libopenh264-launch $SNAP/usr/bin/supertuxkart
+    command: desktop-launch libopenh264-launch $SNAP/usr/bin/supertuxkart
     desktop: usr/share/applications/supertuxkart.desktop
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
@@ -27,16 +17,54 @@ apps:
     - desktop
     - joystick
     - network
+    - network-bind
     - opengl
     - pulseaudio
     - wayland
     - x11
 
+layout:
+  /etc/asound.conf:
+    bind-file: $SNAP/etc/alsa.conf
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+
 parts:
   alsa:
-    after: [alsa-lib, alsa-plugins]
-  alsa-plugins:
-    after: [alsa-lib]
+    source: https://github.com/diddledan/snapcraft-alsa.git
+    plugin: nil
+    override-pull: |
+      cat > alsa.conf <<EOF
+      pcm.!default {
+        type pulse
+        fallback "sysdefault"
+        hint {
+          show on
+          description "Default ALSA Output (currently PulseAudio Sound Server)"
+        }
+      }
+      ctl.!default {
+        type pulse
+        fallback "sysdefault"
+      }
+      EOF
+    override-build: |
+      snapcraftctl build
+      install -m644 -D -t $SNAPCRAFT_PART_INSTALL/etc alsa.conf
+    build-packages:
+    - libasound2-dev
+    stage-packages:
+    - libasound2
+    - libasound2-plugins
+
+  desktop-glib-only:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: glib-only
+    plugin: make
+    build-packages:
+    - libglib2.0-dev
+    stage-packages:
+    - libglib2.0-bin
 
   libopenh264-helper:
     source: libopenh264-helper
@@ -49,33 +77,34 @@ parts:
     - bin/bunzip2
     - bin/libopenh264-launch
     - usr/bin/curl
-    - usr/lib/**/libasn1*
-    - usr/lib/**/libcurl-gnutls*
-    - usr/lib/**/libgssapi.so*
-    - usr/lib/**/libhcrypto*
-    - usr/lib/**/libheimbase*
-    - usr/lib/**/libheimntlm*
-    - usr/lib/**/libhx509*
-    - usr/lib/**/liblber*
-    - usr/lib/**/libldap*
-    - usr/lib/**/libroken*
-    - usr/lib/**/librtmp*
-    - usr/lib/**/libsasl2*
-    - usr/lib/**/libwind*
-    - usr/lib/**/sasl2
-    build-attributes: [no-system-libraries]
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasn1*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libcurl-gnutls*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libgssapi.so*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libhcrypto*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libheimbase*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libheimntlm*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libhx509*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/liblber*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libldap*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libroken*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/librtmp*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libsasl2*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libwind*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/sasl2
 
   libopenh264-library:
-    after: [alsa, libopenh264-helper]
     plugin: make
     make-parameters:
     - PREFIX=/usr
-    source: https://github.com/cisco/openh264/archive/v1.7.0.tar.gz
+    source: https://github.com/cisco/openh264/archive/v1.8.0.tar.gz
     build-packages:
     - g++
+    - libasound-dev
     - libpulse-dev
     - nasm
-    stage-packages: [libpulse0]
+    stage-packages:
+    - libasound2
+    - libpulse0
     override-build: |
       snapcraftctl build
       find $SNAPCRAFT_PART_INSTALL/usr/lib/pkgconfig -name "*openh264*.pc" -exec \
@@ -83,14 +112,14 @@ parts:
     prime:
     - lib/libjson-c*
     - lib/libwrap*
-    - usr/lib/**/libasyncns*
-    - usr/lib/**/libFLAC*
-    - usr/lib/**/libpulse*
-    - usr/lib/**/libsndfile*
-    - usr/lib/**/libvorbisenc*
-    - usr/lib/**/pulseaudio
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasound*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasyncns*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libFLAC*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libpulse*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libsndfile*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvorbisenc*
+    - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
     - usr/local/lib/libopenh264.so*
-    build-attributes: [no-system-libraries]
 
   libopenglrecorder:
     after: [libopenh264-library]
@@ -100,7 +129,7 @@ parts:
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
     build-packages:
-    - libturbojpeg
+    - libturbojpeg0-dev
     - libogg-dev
     - libpulse-dev
     - libvorbis-dev
@@ -110,11 +139,10 @@ parts:
     - libogg0
     - libpulse0
     - libvorbisenc2
-    - libvpx3
+    - libvpx5
 
-  supertuxkart-code:
+  supertuxkart:
     after:
-    - desktop-glib-only
     - libopenglrecorder
     - libopenh264-library
     plugin: cmake
@@ -125,6 +153,7 @@ parts:
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
+    parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
     build-packages:
     - libbluetooth-dev
     - libcurl4-openssl-dev
@@ -137,6 +166,7 @@ parts:
     - libopenal-dev
     - libpng-dev
     - libpulse-dev
+    - libssl-dev
     - libvorbis-dev
     - libxrandr-dev
     - libwayland-dev
@@ -145,7 +175,7 @@ parts:
     - zlib1g-dev
     stage-packages:
     - libbluetooth3
-    - libcurl3
+    - libcurl4
     - libdb5.3
     - libfreetype6
     - libfribidi0
@@ -155,6 +185,7 @@ parts:
     - libopenal1
     - libpng16-16
     - libpulse0
+    - libssl1.1
     - libvorbis0a
     - libvorbisfile3
     - libxrandr2
@@ -169,10 +200,9 @@ parts:
     - usr/lib
     - -usr/lib/gcc
     - -usr/lib/sasl2
-    - usr/share/appdata
     - usr/share/applications
     - usr/share/icons
+    - usr/share/metainfo
     - usr/share/pixmaps
     - usr/share/supertuxkart
     - usr/share/X11
-    build-attributes: [no-system-libraries]
