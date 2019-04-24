@@ -161,6 +161,7 @@ parts:
     - libfreetype6-dev
     - libfribidi-dev
     - libgl1-mesa-dev
+    - libgles2-mesa-dev
     - libjpeg-dev
     - libogg-dev
     - libopenal-dev
@@ -180,6 +181,7 @@ parts:
     - libfreetype6
     - libfribidi0
     - libgl1-mesa-glx
+    - libgles2
     - libjpeg8
     - libogg0
     - libopenal1
