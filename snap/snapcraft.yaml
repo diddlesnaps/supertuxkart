@@ -14,12 +14,15 @@ apps:
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
     plugs:
+    - bluez
     - desktop
+    - desktop-legacy
     - joystick
     - network
     - network-bind
     - opengl
     - pulseaudio
+    - screen-inhibit-control
     - wayland
     - x11
 
