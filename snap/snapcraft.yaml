@@ -14,6 +14,7 @@ apps:
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
     plugs:
+    - bluetooth-control
     - bluez
     - desktop
     - desktop-legacy
