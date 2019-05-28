@@ -11,6 +11,7 @@ apps:
   supertuxkart:
     command: desktop-launch libopenh264-launch $SNAP/usr/bin/supertuxkart
     desktop: usr/share/applications/supertuxkart.desktop
+    common-id: supertuxkart.desktop
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
     plugs:
@@ -151,9 +152,6 @@ parts:
     - libopenh264-library
     plugin: cmake
     source: https://sourceforge.net/projects/supertuxkart/files/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
-    override-build: |
-      sed -i 's|Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' ../src/data/supertuxkart.desktop
-      snapcraftctl build
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
