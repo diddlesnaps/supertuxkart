@@ -126,6 +126,8 @@ parts:
     stage-packages:
     - libexpat1
     - libuuid1
+    stage:
+    - -usr/etc
 
   harfbuzz:
     after: [freetype-prebuild, fontconfig, icu]
@@ -144,12 +146,10 @@ parts:
     - LDFLAGS: -L$SNAPCRAFT_STAGE/usr/lib -L$SNAPCRAFT_STAGE/usr/local/lib
     build-packages:
     - gperf
-    - libcairo2-dev
     - libglib2.0-dev
     - libgraphite2-dev
     - uuid-dev
     stage-packages:
-    - libcairo2
     - libglib2.0-bin
     - libgraphite2-3
     - libuuid1
@@ -245,10 +245,13 @@ parts:
     - libopenh264-library
     plugin: cmake
     source: https://sourceforge.net/projects/supertuxkart/files/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
+    parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
-    parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
+    build-environment:
+    - CFLAGS: -I$SNAPCRAFT_STAGE/usr/include/freetype2
+    - CXXFLAGS: -I$SNAPCRAFT_STAGE/usr/include/freetype2
     build-packages:
     - libbluetooth-dev
     - libcurl4-openssl-dev
