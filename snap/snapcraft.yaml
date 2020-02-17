@@ -214,6 +214,9 @@ parts:
     - libopenh264-library
     plugin: cmake
     source: https://sourceforge.net/projects/supertuxkart/files/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
+    override-pull: |
+      snapcraftctl pull
+      sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' data/supertuxkart.desktop
     parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
