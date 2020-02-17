@@ -17,7 +17,6 @@ apps:
     plugs:
     - audio-playback
     - bluetooth-control
-    - bluez
     - desktop
     - desktop-legacy
     - joystick
