@@ -140,10 +140,9 @@ parts:
     - curl
 
   libopenh264-library:
-    plugin: meson
-    meson-parameters:
-    - -Dprefix=/usr
-    - -Dtests=disabled
+    plugin: make
+    make-parameters:
+    - PREFIX=/usr
     source: https://github.com/cisco/openh264/archive/v2.1.1.tar.gz
     build-packages:
     - g++
