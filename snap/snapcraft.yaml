@@ -156,10 +156,6 @@ parts:
     build-environment:
     - CFLAGS: -O2 -pipe
     - CXXFLAGS: -O2 -pipe
-    override-build: |
-      snapcraftctl build
-      find $SNAPCRAFT_PART_INSTALL/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig -name "*openh264*.pc" -exec \
-        sed -i "s|prefix=/usr|prefix=$SNAPCRAFT_STAGE/usr|g" '{}' \;
 
   libopenglrecorder:
     after: [libopenh264-library]
