@@ -1,18 +1,15 @@
 H264DIR=$SNAP_USER_DATA/openh264
 
 # see: https://github.com/cisco/openh264/releases
-OPENH264ARMURL=http://ciscobinary.openh264.org/libopenh264-1.7.0-android19.so.bz2
-OPENH264X64URL=http://ciscobinary.openh264.org/libopenh264-1.7.0-linux64.4.so.bz2
-OPENH264X86URL=http://ciscobinary.openh264.org/libopenh264-1.7.0-linux32.4.so.bz2
+OPENH264X64URL=http://ciscobinary.openh264.org/libopenh264-2.1.1-linux64.6.so.bz2
+OPENH264X86URL=http://ciscobinary.openh264.org/libopenh264-2.1.1-linux32.6.so.bz2
 
 if [ $needs_update = true ]; then
 	rm -rf "$H264DIR"
 	mkdir -p "$H264DIR"
 
 	OPENH264URL=""
-	if [ "$SNAP_ARCH" = "armhf" ]; then
-		OPENH264URL="$OPENH264ARMURL"
-	elif [ "$SNAP_ARCH" = "amd64" ]; then
+	if [ "$SNAP_ARCH" = "amd64" ]; then
 		OPENH264URL="$OPENH264X64URL"
 	elif [ "$SNAP_ARCH" = "i386" -o "$SNAP_ARCH" = "i586" -o "$SNAP_ARCH" = "i686" ]; then
 		OPENH264URL="$OPENH264X86URL"
@@ -24,12 +21,12 @@ if [ $needs_update = true ]; then
 	fi
 fi
 
-if [ ! -e "$H264DIR/libopenh264.so.3" ]; then
-	ln -s libopenh264.so "$H264DIR/libopenh264.so.3"
+if [ -f "$H264DIR/libopenh264.so" ]; then
+	for lib in "libopenh264.so.3" "libopenh264.so.4" "libopenh264.so.6"; do
+		if [ ! -r "$H264DIR/$lib" ]; then
+			rm -f "$H264DIR/$lib"
+			ln -sf libopenh264.so "$H264DIR/$lib"
+		fi
+	done
+	export LD_LIBRARY_PATH="$H264DIR:$LD_LIBRARY_PATH"
 fi
-if [ ! -r "$H264DIR/libopenh264.so.4" ]; then
-	ln -s libopenh264.so "$H264DIR/libopenh264.so.4"
-fi
-
-export LD_LIBRARY_PATH="$H264DIR:$LD_LIBRARY_PATH"
-
