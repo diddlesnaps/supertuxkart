@@ -8,7 +8,8 @@ base: core18
 
 apps:
   supertuxkart:
-    command: desktop-launch libopenh264-launch $SNAP/usr/bin/supertuxkart
+    command: desktop-launch usr/bin/supertuxkart
+    command-chain: [bin/desktop-launch]
     desktop: usr/share/applications/supertuxkart.desktop
     common-id: supertuxkart.desktop
     environment:
@@ -121,6 +122,7 @@ parts:
     - CXXFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/local/include/freetype2
     - LDFLAGS: -L$SNAPCRAFT_STAGE/usr/lib -L$SNAPCRAFT_STAGE/usr/local/lib
     build-packages:
+    - g++
     - gperf
     - libglib2.0-dev
     - libgraphite2-dev
@@ -131,60 +133,10 @@ parts:
     - libpng16-16
     - libuuid1
 
-  libopenh264-helper:
-    source: libopenh264-helper
-    source-subdir: libopenh264
-    plugin: make
-    stage-packages:
-    - bzip2
-    - curl
-
-  libopenh264-library:
-    plugin: make
-    make-parameters:
-    - PREFIX=/usr
-    source: https://github.com/cisco/openh264/archive/v2.1.1.tar.gz
-    build-packages:
-    - g++
-    - libasound-dev
-    - libpulse-dev
-    - nasm
-    stage-packages:
-    - libasound2
-    - libpulse0
-    build-environment:
-    - CFLAGS: -O2 -pipe
-    - CXXFLAGS: -O2 -pipe
-
-  libopenglrecorder:
-    after: [libopenh264-library]
-    plugin: cmake
-    source: https://github.com/Benau/libopenglrecorder.git
-    source-depth: 1
-    build-environment:
-    - CFLAGS: -O2 -pipe
-    - CXXFLAGS: -O2 -pipe
-    configflags:
-    - -DCMAKE_INSTALL_PREFIX=/usr
-    build-packages:
-    - libturbojpeg0-dev
-    - libogg-dev
-    - libpulse-dev
-    - libvorbis-dev
-    - libvpx-dev
-    stage-packages:
-    - libturbojpeg
-    - libogg0
-    - libpulse0
-    - libvorbisenc2
-    - libvpx5
-
   supertuxkart:
     after:
     - freetype
     - harfbuzz
-    - libopenglrecorder
-    - libopenh264-library
     plugin: cmake
     source: https://sourceforge.net/projects/supertuxkart/files/SuperTuxKart/$SNAPCRAFT_PROJECT_VERSION/supertuxkart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
     override-pull: |
@@ -194,6 +146,7 @@ parts:
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
+    - -DBUILD_RECORDER=OFF
     build-environment:
     - CFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/freetype2
     - CXXFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/freetype2
@@ -237,3 +190,4 @@ parts:
     - libwayland-egl1-mesa
     - libxkbcommon0
     - zlib1g
+    - mesa-utils
