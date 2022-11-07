@@ -142,8 +142,8 @@ parts:
     override-pull: |
       snapcraftctl pull
       sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' data/supertuxkart.desktop
-      curl -L -o cacert.patch https://github.com/supertuxkart/stk-code/commit/9bf537ab351f165555048fbc5df88193d8cd70f2.patch
-      patch -Np1 -i cacert.patch
+
+
     parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
     configflags:
     - -DCMAKE_INSTALL_PREFIX=/usr
