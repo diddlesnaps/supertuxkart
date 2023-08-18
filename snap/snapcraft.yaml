@@ -4,12 +4,16 @@ adopt-info: supertuxkart
 
 grade: stable
 confinement: strict
-base: core18
+base: core22
+
+layout:
+  /usr/share/libdrm:
+    bind: $SNAP/usr/share/libdrm
 
 apps:
   supertuxkart:
+    extensions: [gnome]
     command: usr/bin/supertuxkart
-    command-chain: [bin/desktop-launch]
     desktop: usr/share/applications/supertuxkart.desktop
     common-id: supertuxkart.desktop
     environment:
@@ -28,136 +32,28 @@ apps:
     - wayland
     - x11
 
-layout:
-  /etc/asound.conf:
-    bind-file: $SNAP/etc/alsa.conf
-  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
-    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
-
 parts:
-  alsa:
-    source: https://github.com/diddledan/snapcraft-alsa.git
-    plugin: nil
-    override-pull: |
-      cat > alsa.conf <<EOF
-      pcm.!default {
-        type pulse
-        fallback "sysdefault"
-        hint {
-          show on
-          description "Default ALSA Output (currently PulseAudio Sound Server)"
-        }
-      }
-      ctl.!default {
-        type pulse
-        fallback "sysdefault"
-      }
-      EOF
-    override-build: |
-      snapcraftctl build
-      install -m644 -D -t $SNAPCRAFT_PART_INSTALL/etc alsa.conf
-    build-packages:
-    - libasound2-dev
-    stage-packages:
-    - libasound2
-    - libasound2-plugins
-
-  desktop-glib-only:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: glib-only
-    plugin: make
-    build-packages:
-    - libglib2.0-dev
-    stage-packages:
-    - libglib2.0-bin
-
-  freetype-prebuild:
-    source: https://download.savannah.gnu.org/releases/freetype/freetype-2.11.0.tar.xz
-    source-checksum: sha256/8bee39bd3968c4804b70614a0a3ad597299ad0e824bc8aad5ce8aaf48067bde7
-    plugin: autotools
-    configflags:
-    - --prefix=/usr/local
-    - --with-harfbuzz=no
-    build-packages:
-    - libbz2-dev
-    - libpng-dev
-    - zlib1g-dev
-    stage-packages:
-    - libbz2-1.0
-    - libpng16-16
-    - zlib1g
-    prime:
-    - -*
-  
-  freetype:
-    after: [freetype-prebuild, harfbuzz]
-    source: https://download.savannah.gnu.org/releases/freetype/freetype-2.11.0.tar.xz
-    source-checksum: sha256/8bee39bd3968c4804b70614a0a3ad597299ad0e824bc8aad5ce8aaf48067bde7
-    plugin: autotools
-    configflags:
-    - --prefix=/usr
-    - --with-harfbuzz=yes
-    build-environment:
-    - CFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/harfbuzz
-    - CXXFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/harfbuzz
-    build-packages:
-    - libbz2-dev
-    - libpng-dev
-    - zlib1g-dev
-    stage-packages:
-    - libbz2-1.0
-    - libpng16-16
-    - zlib1g
-
-  harfbuzz:
-    after: [freetype-prebuild]
-    source: https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-2.6.7.tar.xz
-    source-checksum: sha256/49e481d06cdff97bf68d99fa26bdf785331f411614485d892ea4c78eb479b218
-    plugin: autotools
-    configflags:
-    - --prefix=/usr
-    - --with-freetype
-    build-environment:
-    - CFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/local/include/freetype2
-    - CXXFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/local/include/freetype2
-    - LDFLAGS: -L$SNAPCRAFT_STAGE/usr/lib -L$SNAPCRAFT_STAGE/usr/local/lib
-    build-packages:
-    - g++
-    - gperf
-    - libglib2.0-dev
-    - libgraphite2-dev
-    - uuid-dev
-    stage-packages:
-    - libglib2.0-bin
-    - libgraphite2-3
-    - libpng16-16
-    - libuuid1
-
   supertuxkart:
-    after:
-    - freetype
-    - harfbuzz
     plugin: cmake
     source: https://github.com/supertuxkart/stk-code/releases/download/$SNAPCRAFT_PROJECT_VERSION/SuperTuxKart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
     override-pull: |
       snapcraftctl pull
       sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' data/supertuxkart.desktop
     parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
-    configflags:
+    cmake-parameters:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
     - -DBUILD_RECORDER=OFF
     build-environment:
-    - CFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/freetype2
-    - CXXFLAGS: -O2 -pipe -I$SNAPCRAFT_STAGE/usr/include/freetype2
+    - CFLAGS: -O2 -pipe
+    - CXXFLAGS: -O2 -pipe
     build-packages:
     - curl
     - libbluetooth-dev
     - libcurl4-openssl-dev
-    - libegl1-mesa-dev
+    - libfreetype-dev
     - libfribidi-dev
-    - libgl1-mesa-dev
-    - libgles2-mesa-dev
+    - libharfbuzz-dev
     - libjpeg-dev
     - libogg-dev
     - libopenal-dev
@@ -175,22 +71,20 @@ parts:
     - libbluetooth3
     - libcurl4
     - libdb5.3
+    - libfreetype6
     - libfribidi0
-    - libgl1-mesa-glx
-    - libgles2
+    - libharfbuzz0b
     - libjpeg8
     - libogg0
     - libopenal1
     - libpng16-16
     - libpulse0
     - libsdl2-2.0-0
-    - libssl1.1
+    - libssl3
     - libvorbis0a
     - libvorbisfile3
     - libxrandr2
     - libwayland-client0
     - libwayland-cursor0
-    - libwayland-egl1-mesa
     - libxkbcommon0
     - zlib1g
-    - mesa-utils
