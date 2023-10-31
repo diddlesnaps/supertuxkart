@@ -37,7 +37,7 @@ parts:
     plugin: cmake
     source: https://github.com/supertuxkart/stk-code/releases/download/$SNAPCRAFT_PROJECT_VERSION/SuperTuxKart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
     override-pull: |
-      snapcraftctl pull
+      craftctl default
       sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' data/supertuxkart.desktop
     parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
     cmake-parameters:
