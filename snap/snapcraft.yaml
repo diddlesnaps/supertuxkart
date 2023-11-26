@@ -82,7 +82,7 @@ parts:
     - libxkbcommon0
     - zlib1g
 
-    cleanup:
+  cleanup:
     after: [supertuxkart]
     plugin: nil
     build-snaps: [core22, gtk-common-themes, gnome-42-2204]
