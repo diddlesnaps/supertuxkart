@@ -21,17 +21,12 @@ apps:
     plugs:
     - audio-playback
     - bluetooth-control
-    - desktop
-    - desktop-legacy
     - joystick
     - network
     - network-bind
-    - opengl
     - pulseaudio
     - screen-inhibit-control
-    - wayland
-    - x11
-
+  
 parts:
   supertuxkart:
     plugin: cmake
@@ -53,7 +48,6 @@ parts:
     - libcurl4-openssl-dev
     - libfreetype-dev
     - libfribidi-dev
-    - libharfbuzz-dev
     - libjpeg-dev
     - libogg-dev
     - libopenal-dev
@@ -63,7 +57,6 @@ parts:
     - libssl-dev
     - libvorbis-dev
     - libxrandr-dev
-    - libwayland-dev
     - libxkbcommon-dev
     - subversion
     - zlib1g-dev
@@ -73,7 +66,6 @@ parts:
     - libdb5.3
     - libfreetype6
     - libfribidi0
-    - libharfbuzz0b
     - libjpeg8
     - libogg0
     - libopenal1
@@ -84,7 +76,15 @@ parts:
     - libvorbis0a
     - libvorbisfile3
     - libxrandr2
-    - libwayland-client0
-    - libwayland-cursor0
     - libxkbcommon0
     - zlib1g
+
+  cleanup:
+    after: [supertuxkart]
+    plugin: nil
+    build-snaps: [core22, gtk-common-themes, gnome-42-2204]
+    override-prime: |
+      set -eux
+      for snap in "core22" "gtk-common-themes" "gnome-42-2204"; do
+          cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$CRAFT_PRIME/{}" \;
+      done
