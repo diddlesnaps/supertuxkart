@@ -1,10 +1,10 @@
 name: supertuxkart
-version: '1.4'
+version: '1.5'
 adopt-info: supertuxkart
 
 grade: stable
 confinement: strict
-base: core22
+base: core24
 
 layout:
   /usr/share/libdrm:
@@ -15,7 +15,7 @@ apps:
     extensions: [gnome]
     command: usr/bin/supertuxkart
     desktop: usr/share/applications/supertuxkart.desktop
-    common-id: supertuxkart.desktop
+    common-id: net.supertuxkart.SuperTuxKart
     environment:
       SUPERTUXKART_DATADIR: $SNAP/usr/share/supertuxkart
     plugs:
@@ -35,11 +35,11 @@ apps:
 parts:
   supertuxkart:
     plugin: cmake
-    source: https://github.com/supertuxkart/stk-code/releases/download/$SNAPCRAFT_PROJECT_VERSION/SuperTuxKart-$SNAPCRAFT_PROJECT_VERSION-src.tar.xz
+    source: https://github.com/supertuxkart/stk-code/releases/download/$SNAPCRAFT_PROJECT_VERSION/SuperTuxKart-$SNAPCRAFT_PROJECT_VERSION-src.tar.gz
     override-pull: |
       craftctl default
       sed -i 's|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/supertuxkart.png|' data/supertuxkart.desktop
-    parse-info: [usr/share/metainfo/supertuxkart.appdata.xml]
+    parse-info: [usr/share/metainfo/net.supertuxkart.SuperTuxKart.metainfo.xml]
     cmake-parameters:
     - -DCMAKE_INSTALL_PREFIX=/usr
     - -DENABLE_WAYLAND_DEVICE=ON
@@ -60,6 +60,7 @@ parts:
     - libpng-dev
     - libpulse-dev
     - libsdl2-dev
+    - libshaderc-dev
     - libssl-dev
     - libvorbis-dev
     - libxrandr-dev
@@ -69,22 +70,24 @@ parts:
     - zlib1g-dev
     stage-packages:
     - libbluetooth3
-    - libcurl4
-    - libdb5.3
-    - libfreetype6
-    - libfribidi0
-    - libharfbuzz0b
-    - libjpeg8
-    - libogg0
+      # - libcurl4
+      # - libdb5.3
+      # - libfreetype6
+      # - libfribidi0
+      # - libharfbuzz0b
+      # - libjpeg8
+      # - libogg0
     - libopenal1
-    - libpng16-16
-    - libpulse0
+      # - libpng16-16
+      # - libpulse0
     - libsdl2-2.0-0
-    - libssl3
-    - libvorbis0a
-    - libvorbisfile3
-    - libxrandr2
-    - libwayland-client0
-    - libwayland-cursor0
-    - libxkbcommon0
-    - zlib1g
+    - libshaderc1
+    - libsndio7.0
+      # - libssl3
+      # - libvorbis0a
+      # - libvorbisfile3
+      # - libxrandr2
+      # - libwayland-client0
+      # - libwayland-cursor0
+      # - libxkbcommon0
+      # - zlib1g
